@@ -1,0 +1,61 @@
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         Int       @id @default(autoincrement())
+  username   String    @unique
+  password   String
+  email      String    @unique
+  role       String    @default("user")
+  bookings   Booking[]
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+}
+
+model Train {
+  id                 Int                @id @default(autoincrement())
+  train_number      String             @unique
+  train_name        String
+  source_station    String
+  destination_station String
+  total_seats       Int
+  bookings          Booking[]
+  seatAvailability  SeatAvailability[]
+  created_at        DateTime           @default(now())
+  updated_at        DateTime           @updatedAt
+}
+
+model Booking {
+  id           Int      @id @default(autoincrement())
+  user         User     @relation(fields: [user_id], references: [id])
+  user_id      Int
+  train        Train    @relation(fields: [train_id], references: [id])
+  train_id     Int
+  booking_date DateTime @db.Date
+  seat_number  Int
+  status       String   @default("confirmed")
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
+
+  @@unique([train_id, booking_date, seat_number])
+}
+
+model SeatAvailability {
+  id             Int      @id @default(autoincrement())
+  train          Train    @relation(fields: [train_id], references: [id])
+  train_id       Int
+  travel_date    DateTime @db.Date
+  available_seats Int
+  created_at     DateTime @default(now())
+  updated_at     DateTime @updatedAt
+
+  @@unique([train_id, travel_date])
+  @@index([travel_date])
+}
