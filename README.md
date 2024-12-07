@@ -76,7 +76,7 @@ DEBUG="prisma:client,prisma:engine"
 
 1. Clone the repository
   ```bash
-  #  npm install
+  https://github.com/SHARJIDH/Railway_system.git
    ```
 2. Install dependencies:
    ```bash
